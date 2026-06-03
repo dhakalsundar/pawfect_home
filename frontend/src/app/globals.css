@@ -1,0 +1,371 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------
+   PawfectHome design tokens
+   Brand: warm coral -> amber, deep teal accent, warm neutral surfaces.
+   All colours are oklch so light/dark stay perceptually consistent.
+------------------------------------------------------------------ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-display);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* brand scale — used for gradients, illustrations, category chips */
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-amber-brand: var(--amber-brand);
+  --color-teal-brand: var(--teal-brand);
+  --color-teal-brand-fg: var(--teal-brand-fg);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* layered soft shadows — warm-tinted rather than neutral black */
+  --shadow-soft: 0 1px 2px oklch(0.28 0.05 40 / 0.04),
+    0 4px 12px oklch(0.28 0.05 40 / 0.06);
+  --shadow-lift: 0 2px 4px oklch(0.28 0.05 40 / 0.05),
+    0 12px 28px oklch(0.28 0.05 40 / 0.1);
+  --shadow-float: 0 4px 8px oklch(0.28 0.05 40 / 0.06),
+    0 24px 48px oklch(0.28 0.05 40 / 0.14);
+  --shadow-glow: 0 8px 32px oklch(0.7 0.175 27 / 0.28);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* warm off-white, not clinical #fff */
+  --background: oklch(0.994 0.004 85);
+  --foreground: oklch(0.185 0.015 45);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.185 0.015 45);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.185 0.015 45);
+
+  /* coral */
+  --primary: oklch(0.685 0.175 27);
+  --primary-foreground: oklch(0.995 0.005 60);
+
+  /*
+   * The same coral, darkened for use as SMALL TEXT only.
+   *
+   * `--primary` at L=0.685 measures 3.0:1 against the warm background — fine for fills, buttons and
+   * the gradient (WCAG asks 3:1 of UI components and large text), but short of the 4.5:1 that
+   * 14px body text needs. Found by axe-core in Batch 15.
+   *
+   * L=0.56, not 0.58: 0.58 clears 4.5:1 against the page background (4.60) but only reaches 4.29
+   * against the tinted `--brand-50` surface that selected chips and pills use. The token has to
+   * satisfy the *worst* background it appears on, not the most common one.
+   *
+   * Deliberately a second token rather than a darker `--primary`: changing the base would deepen
+   * every gradient and button in the app, and the brand coral is a decision that was already made.
+   * Use `text-primary-strong` for coral text; keep `bg-primary` / `.bg-brand-gradient` as they are.
+   */
+  --primary-strong: oklch(0.56 0.175 27);
+
+  --secondary: oklch(0.965 0.012 70);
+  --secondary-foreground: oklch(0.28 0.03 40);
+
+  --muted: oklch(0.966 0.008 75);
+  --muted-foreground: oklch(0.53 0.022 50);
+
+  /* deep teal */
+  --accent: oklch(0.955 0.028 185);
+  --accent-foreground: oklch(0.42 0.09 185);
+
+  --destructive: oklch(0.585 0.225 25);
+  --border: oklch(0.905 0.01 65);
+  --input: oklch(0.905 0.01 65);
+  --ring: oklch(0.685 0.175 27);
+
+  --brand-50: oklch(0.975 0.018 40);
+  --brand-100: oklch(0.945 0.04 38);
+  --brand-200: oklch(0.895 0.075 34);
+  --brand-300: oklch(0.825 0.115 31);
+  --brand-400: oklch(0.755 0.15 29);
+  --brand-500: oklch(0.685 0.175 27);
+  --brand-600: oklch(0.605 0.185 26);
+  --brand-700: oklch(0.515 0.165 26);
+  --amber-brand: oklch(0.795 0.145 68);
+  --teal-brand: oklch(0.455 0.088 185);
+  --teal-brand-fg: oklch(0.985 0.01 185);
+
+  --success: oklch(0.62 0.14 155);
+  --warning: oklch(0.79 0.15 75);
+  --info: oklch(0.6 0.13 240);
+
+  --chart-1: oklch(0.685 0.175 27);
+  --chart-2: oklch(0.795 0.145 68);
+  --chart-3: oklch(0.455 0.088 185);
+  --chart-4: oklch(0.62 0.14 155);
+  --chart-5: oklch(0.6 0.13 240);
+
+  --sidebar: oklch(0.985 0.006 80);
+  --sidebar-foreground: oklch(0.185 0.015 45);
+  --sidebar-primary: oklch(0.685 0.175 27);
+  --sidebar-primary-foreground: oklch(0.995 0.005 60);
+  --sidebar-accent: oklch(0.955 0.015 70);
+  --sidebar-accent-foreground: oklch(0.28 0.03 40);
+  --sidebar-border: oklch(0.905 0.01 65);
+  --sidebar-ring: oklch(0.685 0.175 27);
+}
+
+.dark {
+  /* warm near-black, never pure #000 */
+  --background: oklch(0.165 0.012 50);
+  --foreground: oklch(0.965 0.008 80);
+
+  --card: oklch(0.212 0.014 50);
+  --card-foreground: oklch(0.965 0.008 80);
+  --popover: oklch(0.212 0.014 50);
+  --popover-foreground: oklch(0.965 0.008 80);
+
+  /* lift coral for contrast on dark surfaces */
+  --primary: oklch(0.735 0.165 28);
+  --primary-foreground: oklch(0.185 0.03 30);
+  /* On the near-black dark surface the vivid coral already clears 4.5:1, so text can keep it. */
+  --primary-strong: oklch(0.775 0.155 28);
+
+  --secondary: oklch(0.278 0.016 50);
+  --secondary-foreground: oklch(0.955 0.008 80);
+
+  --muted: oklch(0.278 0.016 50);
+  --muted-foreground: oklch(0.715 0.018 65);
+
+  --accent: oklch(0.318 0.042 185);
+  --accent-foreground: oklch(0.88 0.06 185);
+
+  --destructive: oklch(0.68 0.19 24);
+  --border: oklch(0.965 0.02 70 / 12%);
+  --input: oklch(0.965 0.02 70 / 16%);
+  --ring: oklch(0.735 0.165 28);
+
+  --brand-50: oklch(0.245 0.03 32);
+  --brand-100: oklch(0.305 0.055 30);
+  --brand-200: oklch(0.395 0.09 29);
+  --brand-300: oklch(0.495 0.125 28);
+  --brand-400: oklch(0.615 0.155 28);
+  --brand-500: oklch(0.735 0.165 28);
+  --brand-600: oklch(0.805 0.14 30);
+  --brand-700: oklch(0.875 0.1 34);
+  --amber-brand: oklch(0.825 0.14 70);
+  --teal-brand: oklch(0.62 0.095 183);
+  --teal-brand-fg: oklch(0.16 0.02 185);
+
+  --success: oklch(0.7 0.145 155);
+  --warning: oklch(0.83 0.145 78);
+  --info: oklch(0.7 0.13 240);
+
+  --chart-1: oklch(0.735 0.165 28);
+  --chart-2: oklch(0.825 0.14 70);
+  --chart-3: oklch(0.62 0.095 183);
+  --chart-4: oklch(0.7 0.145 155);
+  --chart-5: oklch(0.7 0.13 240);
+
+  --sidebar: oklch(0.192 0.013 50);
+  --sidebar-foreground: oklch(0.965 0.008 80);
+  --sidebar-primary: oklch(0.735 0.165 28);
+  --sidebar-primary-foreground: oklch(0.185 0.03 30);
+  --sidebar-accent: oklch(0.278 0.016 50);
+  --sidebar-accent-foreground: oklch(0.955 0.008 80);
+  --sidebar-border: oklch(0.965 0.02 70 / 12%);
+  --sidebar-ring: oklch(0.735 0.165 28);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+    /* offset for the sticky navbar when jumping to #anchors */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight text-balance;
+  }
+
+  /* visible, on-brand focus ring everywhere — a11y baseline */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+
+  ::selection {
+    background: var(--brand-200);
+    color: var(--brand-700);
+  }
+
+  /* honour the OS setting: kill motion, keep everything usable */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /*
+   * CSS entrance reveal for above-the-fold content.
+   *
+   * Deliberately NOT the JS motion wrapper: those render opacity:0 into the SSR HTML, so the
+   * content stays invisible until React hydrates and requestAnimationFrame runs. In a throttled
+   * or backgrounded tab, with JS disabled, or on a slow connection, that leaves the hero blank.
+   *
+   * There is no animation-fill-mode here on purpose. If the animation never runs, the element
+   * keeps its normal visible styles — the worst case is "no animation", never "no content".
+   * Use motion/react for scroll-triggered reveals below the fold, where JS has already loaded.
+   */
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .reveal {
+    animation: reveal-up 0.55s var(--ease-out-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      animation: none;
+    }
+  }
+
+  /* the signature coral -> amber wash, used on hero + CTAs */
+  .bg-brand-gradient {
+    background-image: linear-gradient(
+      135deg,
+      var(--brand-500) 0%,
+      var(--amber-brand) 100%
+    );
+  }
+
+  .text-brand-gradient {
+    background-image: linear-gradient(
+      135deg,
+      var(--brand-500) 0%,
+      var(--amber-brand) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* soft radial warmth behind hero/section headers */
+  .bg-brand-glow {
+    background-image: radial-gradient(
+        60% 60% at 15% 10%,
+        var(--brand-100) 0%,
+        transparent 60%
+      ),
+      radial-gradient(50% 50% at 90% 0%, var(--accent) 0%, transparent 55%);
+  }
+
+  /* restrained glassmorphism — navbar, floating chips */
+  .glass {
+    background-color: color-mix(in oklch, var(--background) 72%, transparent);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
+  }
+  .shadow-float {
+    box-shadow: var(--shadow-float);
+  }
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* card hover: lift + shadow, one shared micro-interaction */
+  .hover-lift {
+    transition:
+      transform 0.28s var(--ease-out-soft),
+      box-shadow 0.28s var(--ease-out-soft);
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-float);
+  }
+}
