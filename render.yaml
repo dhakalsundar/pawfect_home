@@ -1,0 +1,50 @@
+# Render blueprint for the API.
+#
+# The backend needs a PERSISTENT process, not a serverless function: Socket.io holds long-lived
+# WebSocket connections, and the rooms a client is joined to live in that process's memory. This is
+# the direct consequence of choosing Socket.io over Pusher back in Batch 1 — see the decision log.
+services:
+  - type: web
+    name: pawfecthome-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+
+      # Set in the Render dashboard, never here.
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+      # Must be the deployed frontend origin, exactly — it drives both CORS and the OAuth redirect.
+      - key: FRONTEND_URL
+        sync: false
